@@ -1,14 +1,19 @@
-﻿version: '3.8'
+version: '3.8'
 
 services:
   diagnostico-app:
-    build: .
-    ports:
-      - "3000:80"
-    restart: unless-stopped
+    image: joseojunior/diagnostico-empresarial:latest
     environment:
       - NODE_ENV=production
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.diagnostico.rule=Host(diagnostico.localhost)"
-      - "traefik.http.services.diagnostico.loadbalancer.server.port=80"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - traefik.enable=1
+        - traefik.http.routers.diagnostico.rule=Host(`diag.joseojunior.shop`)
+        - traefik.http.routers.diagnostico.entrypoints=websecure
+        - traefik.http.routers.diagnostico.tls.certresolver=letsencryptresolver
+        - traefik.http.services.diagnostico.loadbalancer.server.port=80
