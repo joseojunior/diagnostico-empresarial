@@ -1,0 +1,14 @@
+﻿version: '3.8'
+
+services:
+  diagnostico-app:
+    build: .
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.diagnostico.rule=Host(diagnostico.localhost)"
+      - "traefik.http.services.diagnostico.loadbalancer.server.port=80"
